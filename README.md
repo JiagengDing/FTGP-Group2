@@ -7,7 +7,7 @@ This is an Ethereum-based trading DApp that allows users to trade options and fu
 To get started with this application, follow the steps below:
 
 1. Clone the repository
-2. Install the required dependencies using `npm install`
+2. Install the required dependencies using `npm config set legacy-peer-deps true && npm install`
 3. Compile the Solidity contract using `npm run compile`
 4. Deploy the contract using `npm run deploy`
 5. Start the Next.js server using `npm run dev`
@@ -47,13 +47,11 @@ If you would like to contribute to this project, please open an issue or submit 
 
 This project is licensed under the GPL-3.0 License. See the `LICENSE` file for more information.
 
-## Learn More
+## Reference
+
+- [the Next.js GitHub repository](https://github.com/vercel/next.js/)
 
 To learn more about Next.js, take a look at the following resources:
 
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-## Reference
-
-- [the Next.js GitHub repository](https://github.com/vercel/next.js/)
