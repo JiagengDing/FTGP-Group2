@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Typography, Link } from "@material-ui/core";
 import Header from "../components/Header";
 
-const useStyles = makeStyles((theme) => ({
+const UseStyles = makeStyles((theme) => ({
 	root: {
 		display: "flex",
 		flexDirection: "column",
@@ -22,27 +22,30 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const contact = () => {
-	const classes = useStyles();
+	const classes = UseStyles();
 
 	return (
-		<div className={classes.root}>
-			<Head>
-				<title>Contact Us</title>
-			</Head>
-			<Typography variant="h4" className={classes.title}>
-				Contact Us
-			</Typography>
-			<Typography variant="subtitle1" className={classes.subtitle}>
-				We'd love to hear from you!
-			</Typography>
-			<Typography variant="body1">
-				Please email us at <Link href="jiageng@mail.diing.uk">jiageng@mail.diing.uk</Link>.
-			</Typography>
-			<Typography variant="body2">
-				You can also follow us on{" "}
-				<Link href="https://github.com/jiagengding/ftgp-group2">GitHub</Link>.
-			</Typography>
-		</div>
+		<>
+			<Header />
+			<div className={classes.root}>
+				<Head>
+					<title>Contact Us</title>
+				</Head>
+				<Typography variant="h4" className={classes.title}>
+					Contact Us
+				</Typography>
+				<Typography variant="subtitle1" className={classes.subtitle}>
+					We would love to hear from you!
+				</Typography>
+				<Typography variant="body1">
+					Please email us at <Link href="manatee@mail.diing.uk">manatee@mail.diing.uk</Link>.
+				</Typography>
+				<Typography variant="body2">
+					You can also follow us on{" "}
+					<Link href="https://github.com/jiagengding/ftgp-group2">GitHub</Link>.
+				</Typography>
+			</div>
+		</>
 	);
 };
 
