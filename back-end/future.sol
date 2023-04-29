@@ -1,15 +1,33 @@
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.0;
+
+// Import Chainlink related contracts
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract FuturesContract {
     address public buyer; // address of the buyer
     address public seller; // address of the seller
-    uint public price; // price of the futures contract
-    uint public quantity; // quantity of the underlying asset
-    uint public expiration; // expiration date of the contract
-    uint public margin; // margin required to open a position
-    uint public leverage; // leverage ratio of the position
-    uint public stopLoss; // price at which a stop-loss order is triggered
-    uint public marginCall; // margin level at which a margin call is triggered
+    uint256 public price; // price of the futures contract
+    uint256 public quantity; // quantity of the underlying asset
+    uint256 public expiration; // expiration date of the contract
+    uint256 public margin; // margin required to open a position
+    uint256 public leverage; // leverage ratio of the position
+    uint256 public stopLoss; // price at which a stop-loss order is triggered
+    uint256 public marginCall; // margin level at which a margin call is triggered
+    
+    // New: Chainlink oracle-related variable
+    AggregatorV3Interface internal priceFeed;
+   
+    // New: Mapping to store trade records for each trader
+    mapping(address => Trade[]) public trades;
+    
+    // New: Struct to store trade records
+    struct Trade {
+        uint256 timestamp;
+        uint256 quantity;
+        uint256 price;
+        bool isBuyOrder;
+    }
 
     // Define the state of the contract using an enum
     enum ContractState {
@@ -21,22 +39,23 @@ contract FuturesContract {
 
     // Define the events of the contract
     event ContractLocked();
-    event ContractSettled(address indexed winner, uint payout);
-    event MarketOrderExecuted(address indexed trader, uint quantity, uint price);
-    event StopLossOrderExecuted(address indexed trader, uint quantity, uint price);
-    event MarginCallTriggered(address indexed trader, uint marginLevel);
-
+    event ContractSettled(address indexed winner, uint256 payout);
+    event MarketOrderExecuted(address indexed trader, uint256 quantity, uint256 price, bool isBuyOrder);
+    event StopLossOrderExecuted(address indexed trader, uint256 quantity, uint256 price, bool isBuyOrder);
+    event MarginCallTriggered(address indexed trader, uint256 marginLevel);
+    
     // Define the constructor to initialize the contract parameters
     constructor(
         address _buyer, // address of the buyer
         address _seller, // address of the seller
-        uint _price, // price of the futures contract
-        uint _quantity, // quantity of the underlying asset
-        uint _expiration, // expiration date of the contract
-        uint _margin, // margin required to open a position
-        uint _leverage, // leverage ratio of the position
-        uint _stopLoss, // price at which a stop-loss order is triggered
-        uint _marginCall // margin level at which a margin call is triggered
+        uint256 _price, // price of the futures contract
+        uint256 _quantity, // quantity of the underlying asset
+        uint256 _expiration, // expiration date of the contract
+        uint256 _margin, // margin required to open a position
+        uint256 _leverage, // leverage ratio of the position
+        uint256 _stopLoss, // price at which a stop-loss order is triggered
+        uint256 _marginCall // margin level at which a margin call is triggered
+        address _priceFeedAddress // New: Chainlink oracle address parameter
     ) {
         buyer = _buyer;
         seller = _seller;
@@ -48,6 +67,9 @@ contract FuturesContract {
         stopLoss = _stopLoss;
         marginCall = _marginCall;
         state = ContractState.Created;
+        
+        // New: Initialize Chainlink oracle
+        priceFeed = AggregatorV3Interface(_priceFeedAddress);
     }
 
     // Lock the contract to activate it and open a position
@@ -59,7 +81,7 @@ contract FuturesContract {
         // Check that the margin is sufficient to open a position
         require(msg.value >= margin, "Insufficient margin to open a position");
         // Calculate the amount of the underlying asset that can be bought with the margin and leverage
-        uint positionSize = (msg.value * leverage * price) / 1 ether;
+        uint256 positionSize = (msg.value * leverage * price) / 1 ether;
         // Change the state of the contract to Locked
         state = ContractState.Locked;
         // Emit the ContractLocked event
@@ -67,19 +89,22 @@ contract FuturesContract {
     }
 
     // Execute a market order to buy or sell the underlying asset
-    function executeMarketOrder(bool isBuyOrder, uint quantity) public payable {
+    function executeMarketOrder(bool isBuyOrder, uint256 orderQuantity) public payable {
         // Check that the caller is either the buyer or the seller
         require(msg.sender == buyer || msg.sender == seller, "Only buyer or seller can execute a market order");
         // Check that the contract is in the correct state to execute a market order
         require(state == ContractState.Locked, "Contract is not in the correct state to execute a market order");
         // Calculate the cost of the order based on the price and quantity of the contract
-        uint cost = price * quantity;
+        
+        uint256 currentPrice = getPrice();
+        uint256 cost = price * quantity;
+        
         // Check that the trader has sufficient funds or assets to execute the order
         if (isBuyOrder) {
             require(msg.sender == buyer, "Only the buyer can execute a buy order");
             require(msg.value >= cost, "Insufficient funds to execute the buy order");
             // Calculate the new position size after executing the order
-            uint newPositionSize = ((msg.value - cost) * leverage * price) / 1 ether;
+            uint256 newPositionSize = ((msg.value - cost) * leverage * price) / 1 ether;
             // Check if a margin call has been triggered
             if (newPositionSize * price < marginCall * margin) {
                 // Trigger a margin call if the new position size falls below the margin call level
@@ -89,7 +114,7 @@ contract FuturesContract {
             require(msg.sender == seller, "Only the seller can execute a sell order");
             require(quantity <= quantity - (msg.value / price), "Insufficient assets to execute the sell order");
             // Calculate the new position size after executing the order
-            uint newPositionSize = ((msg.value + cost) * leverage * price) / 1 ether;
+            uint256 newPositionSize = ((msg.value + cost) * leverage * price) / 1 ether;
             // Check if a margin call has been triggered
             if (newPositionSize * price < marginCall * margin) {
                 // Trigger a margin call if the new position size falls below the margin call level
@@ -99,6 +124,19 @@ contract FuturesContract {
         // Emit the MarketOrderExecuted event with the trader, quantity, and price as parameters
         emit MarketOrderExecuted(msg.sender, quantity, price);
     }
+        
+        // Add the executed trade to the trade history and emit the MarketOrderExecuted event
+        Trade memory newTrade = Trade({
+            timestamp: block.timestamp,
+            quantity: orderQuantity,
+            price: currentPrice,
+            isBuyOrder: isBuyOrder
+        });
+
+        trades[msg.sender].push(newTrade);
+
+        emit MarketOrderExecuted(msg.sender, orderQuantity, currentPrice, isBuyOrder);
+    }
 
     // Execute a stop-loss order to limit potential losses
     function executeStopLossOrder(bool isBuyOrder, uint quantity) public payable{
@@ -107,27 +145,41 @@ contract FuturesContract {
         // Check that the contract is in the correct state to execute a stop-loss order
         require(state == ContractState.Locked, "Contract is not in the correct state to execute a stop-loss order");
         // Calculate the cost of the order based on the price and quantity of the contract
-        uint cost = price * quantity;
+        
+        uint256 currentPrice = getPrice();
+        uint256 cost = currentPrice * orderQuantity;
+        
         // Check that the trader has not exceeded the stop-loss price
         if (isBuyOrder) {
-            require(price <= stopLoss, "Stop-loss price not reached for buy order");
+            require(currentPrice <= stopLoss, "Stop-loss price not reached for buy order");
             // Calculate the new position size after executing the order
-            uint newPositionSize = ((msg.value - cost) * leverage * price) / 1 ether;
+            uint256 newPositionSize = ((msg.value - cost) * leverage * price) / 1 ether;
             // Check if a margin call has been triggered
-            if (newPositionSize * price < marginCall * margin) {
+            if (newPositionSize * currentPrice < marginCall * margin) {
                 // Trigger a margin call if the new position size falls below the margin call level
                 emit MarginCallTriggered(msg.sender, newPositionSize * price / margin);
             }
         } else {
-            require(price >= stopLoss, "Stop-loss price not reached for sell order");
+            require(currentPrice >= stopLoss, "Stop-loss price not reached for sell order");
             // Calculate the new position size after executing the order
-            uint newPositionSize = ((msg.value + cost) * leverage * price) / 1 ether;
+            
+            uint256 newPositionSize = ((msg.value + cost) * leverage * price) / 1 ether;
             // Check if a margin call has been triggered
-            if (newPositionSize * price < marginCall * margin) {
+            if (newPositionSize * currentPrice < marginCall * margin) {
                 // Trigger a margin call if the new position size falls below the margin call level
                 emit MarginCallTriggered(msg.sender, newPositionSize * price / margin);
             }
         }
+        
+        Trade memory newTrade = Trade({
+            timestamp: block.timestamp,
+            quantity: orderQuantity,
+            price: currentPrice,
+            isBuyOrder: isBuyOrder
+        });
+
+        trades[msg.sender].push(newTrade);
+        
         // Emit the StopLossOrderExecuted event with the trader, quantity, and price as parameters
         emit StopLossOrderExecuted(msg.sender, quantity, price);
     }
@@ -137,11 +189,15 @@ contract FuturesContract {
         // Check that the contract is in the correct state to be settled
         require(state == ContractState.Locked, "Contract is not in the correct state to be settled");
         // Calculate the payout based on the difference between the current price and the contract price
-        uint payout = ((price - getPrice()) * quantity * leverage) / 1 ether;
+        
+        uint256 currentPrice = getPrice();
+        uint256 payout = ((price - currentPrice) * quantity * leverage) / 1 ether;
+        
         // Determine the winner based on the price of the underlying asset
         address winner = payout > 0 ? buyer : seller;
         // Transfer the payout to the winner
         payable(winner).transfer(payout);
+        
         // Change the state of the contract to Inactive
         state = ContractState.Inactive;
         // Emit the ContractSettled event with the winner and payout as parameters
@@ -149,10 +205,18 @@ contract FuturesContract {
     }
 
     // Get the current price of the underlying asset
-    function getPrice() public view returns (uint) {
-        // This function would query an oracle or other external data source to get the current price of the asset
-        // For simplicity, we're just returning a random number between 1 and 1000
-        return uint(keccak256(abi.encodePacked(block.timestamp))) % 1000 + 1;
+    function getPrice() public view returns (uint256) {
+        (
+            uint80 roundID,
+            int256 answer,
+            uint256 startedAt,
+            uint256 updatedAt,
+            uint80 answeredInRound
+        ) = priceFeed.latestRoundData();
+
+        require(answer > 0, "Invalid price");
+
+        return uint256(answer);
     }
 
     // Terminate the contract and return the margin to the buyer
@@ -166,4 +230,7 @@ contract FuturesContract {
         // Change the state of the contract to Inactive
         state = ContractState.Inactive;
     }
-}
+    
+    function getTradeHistory(address trader) public view returns (Trade[] memory) {
+        return trades[trader];
+    }
