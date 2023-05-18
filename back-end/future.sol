@@ -1,6 +1,17 @@
 pragma solidity ^0.8.0;
 
 contract FuturesContract {
+    // Contract owner
+    address public owner;
+    // Service fee percentage
+    uint256 public serviceFee;
+    // User balances
+    mapping(address => uint256) public balances;
+    // Underlying asset prices
+    mapping(string => uint256) public prices;
+    // Trade records
+    mapping(address => Trade[]) public trades;
+    // Trade struct
     address public owner;
     uint256 public serviceFee;
     mapping(address => uint256) public balances;
@@ -15,6 +26,7 @@ contract FuturesContract {
         uint256 quantity;
         uint256 timestamp;
     }
+
     event TradeEvent(
         address indexed buyer,
         address indexed seller,
@@ -52,6 +64,16 @@ contract FuturesContract {
         balances[owner] += fee;
         balances[seller] += totalCost - fee;
 
+        Trade memory trade = Trade(
+            buyer,
+            seller,
+            asset,
+            price,
+            quantity,
+            block.timestamp
+        );
+        trades[buyer].push(trade);
+        trades[seller].push(trade);
         Trade memory newTrade =
             Trade(buyer, seller, asset, price, quantity, block.timestamp);
         trades[buyer].push(newTrade);
@@ -60,6 +82,17 @@ contract FuturesContract {
         emit TradeEvent(buyer, seller, asset, price, quantity);
     }
 
+    // Get a user's trade records
+    function getTrades(address user) public view returns (Trade[] memory) {
+        return trades[user];
+    }
+
+    // Deposit funds into the contract
+    function deposit() public payable {
+        balances[msg.sender] += msg.value;
+    }
+
+    // Withdraw funds from the contract
     function getTrades(address user)
         public
         view
