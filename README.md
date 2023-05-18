@@ -39,9 +39,12 @@ The smart contract for the trading application is located in the `back-end/` dir
 
 The front-end for the DApp is built using Next.js and is located in the `pages/` directory. The front-end communicates with the smart contract using the `web3.js` library.
 
-## Contributing
+## Contributors
 
-If you would like to contribute to this project, please open an issue or submit a pull request on GitHub. We welcome contributions from the community.
+- [ Yiting Yu ](https://github.com/uuTing): Future trading smart contract.
+- [ Longxi He ](https://github.com/LongxiHe): Option trading smart contract.
+- [ Brenda Lu ](https://github.com/brendalu21fav): Portfolio trading smart contract.
+- [ Jianan Wang ](https://github.com/righteousnoah): Portfolio creation smart contract.
 
 ## License
 

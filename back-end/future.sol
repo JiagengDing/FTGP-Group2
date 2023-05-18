@@ -12,6 +12,12 @@ contract FuturesContract {
     // Trade records
     mapping(address => Trade[]) public trades;
     // Trade struct
+    address public owner;
+    uint256 public serviceFee;
+    mapping(address => uint256) public balances;
+    mapping(string => uint256) public prices;
+    mapping(address => Trade[]) public trades;
+
     struct Trade {
         address buyer;
         address seller;
@@ -21,7 +27,6 @@ contract FuturesContract {
         uint256 timestamp;
     }
 
-    // Trade event
     event TradeEvent(
         address indexed buyer,
         address indexed seller,
@@ -30,24 +35,20 @@ contract FuturesContract {
         uint256 quantity
     );
 
-    // Constructor to set the service fee percentage
     constructor(uint256 _serviceFee) {
         owner = msg.sender;
         serviceFee = _serviceFee;
     }
 
-    // Set the price of an underlying asset, only the contract owner can call this function
     function setPrice(string memory asset, uint256 price) public {
         require(msg.sender == owner, "Only owner can set price");
         prices[asset] = price;
     }
 
-    // Get the price of an underlying asset
     function getPrice(string memory asset) public view returns (uint256) {
         return prices[asset];
     }
 
-    // Execute a trade between a buyer and a seller and collect a service fee from both parties
     function trade(
         address buyer,
         address seller,
@@ -73,6 +74,10 @@ contract FuturesContract {
         );
         trades[buyer].push(trade);
         trades[seller].push(trade);
+        Trade memory newTrade =
+            Trade(buyer, seller, asset, price, quantity, block.timestamp);
+        trades[buyer].push(newTrade);
+        trades[seller].push(newTrade);
 
         emit TradeEvent(buyer, seller, asset, price, quantity);
     }
@@ -88,6 +93,18 @@ contract FuturesContract {
     }
 
     // Withdraw funds from the contract
+    function getTrades(address user)
+        public
+        view
+        returns (Trade[] memory)
+    {
+        return trades[user];
+    }
+
+    function deposit() public payable {
+        balances[msg.sender] += msg.value;
+    }
+    
     function withdraw(uint256 amount) public {
         require(balances[msg.sender] >= amount, "Insufficient balance");
         balances[msg.sender] -= amount;
