@@ -41,8 +41,10 @@ The front-end for the DApp is built using Next.js and is located in the `pages/`
 
 ## Contributors
 
-- [ Yiting Yu ](https://github.com/uuTing): Add future smart contract.
-- [ Longxi He ](https://github.com/LongxiHe): Add option smart contract.
+- [ Yiting Yu ](https://github.com/uuTing): Future trading smart contract.
+- [ Longxi He ](https://github.com/LongxiHe): Option trading smart contract.
+- [ Brenda Lu ](https://github.com/brendalu21fav): Portfolio trading smart contract.
+- [ Jianan Wang ](https://github.com/righteousnoah): Portfolio creation smart contract.
 
 ## License
 
