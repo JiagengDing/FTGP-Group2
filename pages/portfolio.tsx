@@ -16,14 +16,22 @@ const contractAddress = address.address;
 const contractAbi = abi;
 
 export default function Create() {
-	const [selectedPortfolio, setSelectedPortfolio] = useState({
+	const [selectedPortfolio, setSelectedPortfolio] = useState<{
+		name: string;
+		symbol: string;
+		percentages: number[];
+		address: string;
+		totalSupply: number;
+		balance: number;
+	}>({
 		name: "",
 		symbol: "",
-		percentages: [0, 0, 0],
+		percentages: [],
 		address: "",
 		totalSupply: 0,
 		balance: 0,
 	});
+
 	const [dai, setDai] = useState("");
 	const [wbnb, setWbnb] = useState("");
 	const [weth, setWeth] = useState("");
@@ -233,9 +241,9 @@ export default function Create() {
 									onClick={() =>
 										setSelectedPortfolio({
 											name: "TEST",
-											symbol: "Portfolio Symbol",
+											symbol: "TEST",
 											percentages: [10, 20, 70],
-											address: "0x1234567890",
+											address: "0x517834831F0487a6D357d82B98140c94566497A7",
 											totalSupply: 0,
 											balance: 0,
 										})
@@ -248,7 +256,7 @@ export default function Create() {
 							<PortfolioDetails
 								name={selectedPortfolio.name}
 								symbol={selectedPortfolio.symbol}
-								// percentages={selectedPortfolio.percentages}
+								percentages={selectedPortfolio.percentages.join(", ")}
 								address={selectedPortfolio.address}
 								totalSupply={selectedPortfolio.totalSupply}
 								balance={selectedPortfolio.balance}

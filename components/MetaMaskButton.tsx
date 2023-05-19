@@ -15,7 +15,7 @@ function MetaMaskButton() {
 		"flex flex-nowrap border py-2 px-4 rounded-full bg-amber-500 hover:bg-rose-600 cursor-pointer font-semibold text-sm";
 
 	if (userAddress) {
-		return <span className={buttonStyle}>{userAddress}</span>;
+		return <span className={buttonStyle}>Connected!</span>;
 	} else {
 		return (
 			<button onClick={handleClick} className={buttonStyle}>

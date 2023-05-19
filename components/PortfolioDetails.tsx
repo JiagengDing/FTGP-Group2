@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function PortfolioDetails({
 	name = "",
 	symbol = "",
-	percentages = [],
+	percentages = "",
 	address = "",
 	totalSupply = 0,
 	balance = 0,
