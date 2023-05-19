@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-contract FuturesContract {
+contract Future {
     // Contract owner
     address public owner;
     // Service fee percentage
@@ -83,28 +83,35 @@ contract FuturesContract {
         emit TradeEvent(buyer, seller, asset, price, quantity);
     }
 
-    // Publish a new offer
-    function publishOffer(
-        string memory asset,
-        uint256 price,
-        uint256 quantity
-    ) public {
-        Offer memory offer = Offer(msg.sender, asset, price, quantity);
-        offers.push(offer);
-    }
+  // Publish a new offer
+  function publishOffer(
+      string memory asset,
+      uint256 price,
+      uint256 quantity
+  ) public {
+      Offer memory offer = Offer(msg.sender, asset, price, quantity);
+      offers.push(offer);
+  }
 
-    // Get a user's trade records
-    function getTrades(address user) public view returns (Trade[] memory) {
-        return trades[user];
-    }
+  function acceptOffer(uint256 offerId, uint256 quantity) public {
+      Offer storage offer = offers[offerId];
+      require(offer.quantity >= quantity, "Insufficient quantity");
+      trade(msg.sender, offer.seller, offer.asset, quantity);
+      offer.quantity -= quantity;
+  }
 
-    // Deposit funds into the contract
-    function deposit() public payable {
-        balances[msg.sender] += msg.value;
-    }
+  // Get a user's trade records
+  function getTrades(address user) public view returns (Trade[] memory) {
+      return trades[user];
+  }
 
-    // Withdraw funds from the contract
-    function withdraw(uint256 amount) public {
+  // Deposit funds into the contract
+  function deposit() public payable {
+      balances[msg.sender] += msg.value;
+  }
+
+  // Withdraw funds from the contract
+  function withdraw(uint256 amount) public {
       require(balances[msg.sender] >= amount, "Insufficient balance");
       balances[msg.sender] -= amount;
       payable(msg.sender).transfer(amount);
