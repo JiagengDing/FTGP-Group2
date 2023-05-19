@@ -16,7 +16,7 @@ import MetaMaskButton from "./MetaMaskButton";
 function Header() {
 	const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
 
-	const toggleDrawer = (open) => () => {
+	const toggleDrawer = (open: boolean) => () => {
 		setIsDrawerOpen(open);
 	};
 
