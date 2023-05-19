@@ -1,15 +1,21 @@
 import Head from "next/head";
 import { useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Header from "../components/Header";
 import PieChart from "../components/PieChart";
+
+import abi from "../utils/portfolioABI.json";
+import address from "../utils/portfolioAddress.json";
 
 // Assume that we have these components available
 import PortfolioButton from "../components/PortfolioButton";
 import PortfolioDetails from "../components/PortfolioDetails";
 
+const contractAddress = address.address;
+const contractAbi = abi;
+
 export default function Create() {
-	// ... omitted for brevity ...
 	const [selectedPortfolio, setSelectedPortfolio] = useState("");
 	const [dai, setDai] = useState("");
 	const [wbnb, setWbnb] = useState("");
@@ -22,7 +28,6 @@ export default function Create() {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		// logic to create the portfolio
 
 		const params = {
 			dai,
@@ -34,6 +39,12 @@ export default function Create() {
 			totalSupply,
 			customIPRate,
 		};
+
+		// Get accounts
+		const accounts = await web3.eth.getAccounts();
+
+		// Call mint method
+		await contract.methods.mint(params.totalSupply).send({ from: accounts[0] });
 	};
 
 	return (
@@ -157,7 +168,7 @@ export default function Create() {
                 focus:shadow-outline"
 									id="customIPRate"
 									type="number"
-									placeholder="DECIMALS (eg. 18)"
+									placeholder="Percentage of creators profit (eg. 2 means 2%)"
 									value={decimals}
 									onChange={(e) => setIPR(e.target.value)}
 									required
