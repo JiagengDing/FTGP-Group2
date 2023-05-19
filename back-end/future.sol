@@ -12,12 +12,6 @@ contract FuturesContract {
     // Trade records
     mapping(address => Trade[]) public trades;
     // Trade struct
-    address public owner;
-    uint256 public serviceFee;
-    mapping(address => uint256) public balances;
-    mapping(string => uint256) public prices;
-    mapping(address => Trade[]) public trades;
-
     struct Trade {
         address buyer;
         address seller;
@@ -26,6 +20,17 @@ contract FuturesContract {
         uint256 quantity;
         uint256 timestamp;
     }
+
+    // Offer struct
+    struct Offer {
+        address seller;
+        string asset;
+        uint256 price;
+        uint256 quantity;
+    }
+
+    // Published offers
+    Offer[] public offers;
 
     event TradeEvent(
         address indexed buyer,
@@ -74,12 +79,18 @@ contract FuturesContract {
         );
         trades[buyer].push(trade);
         trades[seller].push(trade);
-        Trade memory newTrade =
-            Trade(buyer, seller, asset, price, quantity, block.timestamp);
-        trades[buyer].push(newTrade);
-        trades[seller].push(newTrade);
 
         emit TradeEvent(buyer, seller, asset, price, quantity);
+    }
+
+    // Publish a new offer
+    function publishOffer(
+        string memory asset,
+        uint256 price,
+        uint256 quantity
+    ) public {
+        Offer memory offer = Offer(msg.sender, asset, price, quantity);
+        offers.push(offer);
     }
 
     // Get a user's trade records
@@ -93,21 +104,9 @@ contract FuturesContract {
     }
 
     // Withdraw funds from the contract
-    function getTrades(address user)
-        public
-        view
-        returns (Trade[] memory)
-    {
-        return trades[user];
-    }
-
-    function deposit() public payable {
-        balances[msg.sender] += msg.value;
-    }
-    
     function withdraw(uint256 amount) public {
-        require(balances[msg.sender] >= amount, "Insufficient balance");
-        balances[msg.sender] -= amount;
-        payable(msg.sender).transfer(amount);
-    }
+      require(balances[msg.sender] >= amount, "Insufficient balance");
+      balances[msg.sender] -= amount;
+      payable(msg.sender).transfer(amount);
+  }
 }
