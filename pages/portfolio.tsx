@@ -3,12 +3,12 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Header from "../components/Header";
-import PieChart from "../components/PieChart";
+// import PieChart from "../components/PieChart";
+import web3 from "web3";
 
 import abi from "../utils/portfolioABI.json";
 import address from "../utils/portfolioAddress.json";
 
-// Assume that we have these components available
 import PortfolioButton from "../components/PortfolioButton";
 import PortfolioDetails from "../components/PortfolioDetails";
 
@@ -16,7 +16,14 @@ const contractAddress = address.address;
 const contractAbi = abi;
 
 export default function Create() {
-	const [selectedPortfolio, setSelectedPortfolio] = useState("");
+	const [selectedPortfolio, setSelectedPortfolio] = useState({
+		name: "",
+		symbol: "",
+		percentages: [0, 0, 0],
+		address: "",
+		totalSupply: 0,
+		balance: 0,
+	});
 	const [dai, setDai] = useState("");
 	const [wbnb, setWbnb] = useState("");
 	const [weth, setWeth] = useState("");
@@ -26,7 +33,7 @@ export default function Create() {
 	const [totalSupply, setTotalSupply] = useState("");
 	const [customIPRate, setIPR] = useState("");
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
 		const params = {
@@ -40,11 +47,11 @@ export default function Create() {
 			customIPRate,
 		};
 
-		// Get accounts
-		const accounts = await web3.eth.getAccounts();
-
-		// Call mint method
-		await contract.methods.mint(params.totalSupply).send({ from: accounts[0] });
+		//   // Get accounts
+		//   const accounts = await web3.eth.getAccounts();
+		//
+		//   // Call mint method
+		//   await contract.methods.mint(params.totalSupply).send({ from: accounts[0] });
 	};
 
 	return (
@@ -195,13 +202,58 @@ export default function Create() {
 
 						<div className="flex justify-around my-5">
 							<div>
-								<PortfolioButton name="PM1" onClick={() => setSelectedPortfolio("PM1")} />
-								<PortfolioButton name="LRP" onClick={() => setSelectedPortfolio("LRP")} />
-								<PortfolioButton name="TEST" onClick={() => setSelectedPortfolio("TEST")} />
+								<PortfolioButton
+									name="PM1"
+									onClick={() =>
+										setSelectedPortfolio({
+											name: "PM1",
+											symbol: "Portfolio Symbol",
+											percentages: [10, 20, 70],
+											address: "0x1234567890",
+											totalSupply: 0,
+											balance: 0,
+										})
+									}
+								/>
+								<PortfolioButton
+									name="LPR"
+									onClick={() =>
+										setSelectedPortfolio({
+											name: "LPR",
+											symbol: "Portfolio Symbol",
+											percentages: [10, 20, 70],
+											address: "0x1234567890",
+											totalSupply: 0,
+											balance: 0,
+										})
+									}
+								/>
+								<PortfolioButton
+									name="TEST"
+									onClick={() =>
+										setSelectedPortfolio({
+											name: "TEST",
+											symbol: "Portfolio Symbol",
+											percentages: [10, 20, 70],
+											address: "0x1234567890",
+											totalSupply: 0,
+											balance: 0,
+										})
+									}
+								/>
 							</div>
 						</div>
 
-						{selectedPortfolio && <PortfolioDetails portfolio={selectedPortfolio} />}
+						{selectedPortfolio && (
+							<PortfolioDetails
+								name={selectedPortfolio.name}
+								symbol={selectedPortfolio.symbol}
+								// percentages={selectedPortfolio.percentages}
+								address={selectedPortfolio.address}
+								totalSupply={selectedPortfolio.totalSupply}
+								balance={selectedPortfolio.balance}
+							/>
+						)}
 					</div>
 				</div>
 			</div>

@@ -13,9 +13,9 @@ export default function Create() {
 	const [quantity, setQuantity] = useState("");
 	const [expiresAt, setExpiresAt] = useState("");
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		if (!wallet) return toast.warning("Wallet not connected");
+		// if (!wallet) return toast.warning("Wallet not connected");
 
 		if (!title || !asset || !seller || !price || !quantity || !expiresAt) return;
 		const params = {

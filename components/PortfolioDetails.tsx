@@ -3,14 +3,16 @@
 import { useState } from "react";
 
 export default function PortfolioDetails({
-	name,
-	symbol,
-	percentages,
-	address,
-	totalSupply,
-	balance,
-}) {
-	const [portfolioPercentages, setPortfolioPercentages] = useState([30, 40, 30]);
+	name = "",
+	symbol = "",
+	percentages = [],
+	address = "",
+	totalSupply = 0,
+	balance = 0,
+} = {}) {
+	const [portfolioPercentages, setPortfolioPercentages] = useState(
+		percentages.length > 0 ? percentages : [30, 40, 30]
+	);
 
 	return (
 		<div>
