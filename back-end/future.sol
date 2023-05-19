@@ -11,7 +11,7 @@ contract FuturesContract {
     mapping(string => uint256) public prices;
     // Trade records
     mapping(address => Trade[]) public trades;
-    // Trade struct
+    // Trade  struct
     struct Trade {
         address buyer;
         address seller;
