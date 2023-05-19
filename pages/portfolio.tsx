@@ -10,7 +10,7 @@ import PortfolioDetails from "../components/PortfolioDetails";
 
 export default function Create() {
 	// ... omitted for brevity ...
-	const [selectedPortfolio, setSelectedPortfolio] = useState(null);
+	const [selectedPortfolio, setSelectedPortfolio] = useState("");
 	const [dai, setDai] = useState("");
 	const [wbnb, setWbnb] = useState("");
 	const [weth, setWeth] = useState("");
@@ -18,6 +18,7 @@ export default function Create() {
 	const [symbol, setSymbol] = useState("");
 	const [decimals, setDecimals] = useState("");
 	const [totalSupply, setTotalSupply] = useState("");
+	const [customIPRate, setIPR] = useState("");
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -31,6 +32,7 @@ export default function Create() {
 			symbol,
 			decimals,
 			totalSupply,
+			customIPRate,
 		};
 	};
 
@@ -144,6 +146,20 @@ export default function Create() {
 									placeholder="TOTAL SUPPLY (eg. 100)"
 									value={totalSupply}
 									onChange={(e) => setTotalSupply(e.target.value)}
+									required
+								/>
+							</div>
+
+							<div className="mb-4">
+								<input
+									className="appearance-none border rounded w-full py-2 px-3
+                text-gray-700 leading-tight focus:outline-none
+                focus:shadow-outline"
+									id="customIPRate"
+									type="number"
+									placeholder="DECIMALS (eg. 18)"
+									value={decimals}
+									onChange={(e) => setIPR(e.target.value)}
 									required
 								/>
 							</div>
