@@ -66,10 +66,10 @@ export default function Create() {
 				<title>Manatee Portfolio</title>
 			</Head>
 
-			<div className="min-h-screen bg-slate-100">
+			<div className="min-h-screen bg-slate-100 container mx-auto">
 				<Header />
-				<div className="flex justify-center mt-20">
-					<div className="flex flex-col justify-center items-center w-1/2">
+				<div className="flex flex-col lg:flex-row justify-center mt-20">
+					<div className="flex flex-col justify-center items-center w-full lg:w-1/2">
 						<h1 className="text-2xl font-bold text-slate-800 py-5">Create New Portfolio</h1>
 						<p className="text-center text-sm text-slate-600">
 							Any user can create your portfolio.
@@ -200,7 +200,7 @@ export default function Create() {
 						</form>
 					</div>
 
-					<div className="flex flex-col justify-center items-center w-1/2">
+					<div className="flex flex-col justify-center items-center w-full lg:w-1/2">
 						<h1 className="text-2xl font-bold text-slate-800 py-5">Trade Portfolio</h1>
 						<p className="text-center text-sm text-slate-600">
 							Any user can buy or sell any Existed Portfolio from here.
