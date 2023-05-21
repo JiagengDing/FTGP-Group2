@@ -4,12 +4,18 @@ This is an Ethereum-based trading DApp that allows users to trade options and fu
 
 ## Getting Started
 
+### Docker container
+
+1. `docker pull jiagengding/manatee-dapp`
+2. `docker run manatee-dapp -p 3000:3000`
+
+
+### Local build
 To get started with this application, follow the steps below:
 
 1. Clone the repository
 2. Install the required dependencies using `npm config set legacy-peer-deps true && npm install`
-3. Compile the Solidity contract using `npm run compile`
-4. Deploy the contract using `npm run deploy`
+4. Build this DApp using `npm run build`
 5. Start the Next.js server using `npm run dev`
 
 Once you have completed these steps, you can access the trading application by visiting `http://localhost:3000`.
