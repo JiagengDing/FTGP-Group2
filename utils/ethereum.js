@@ -1,4 +1,7 @@
 import { ethers } from "ethers";
+import { useWeb3React } from "@web3-react/core";
+
+const { active, activate, library: provider } = useWeb3React();
 
 const connectToMetaMask = async () => {
 	if (typeof window.ethereum !== "undefined") {

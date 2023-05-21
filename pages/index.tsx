@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Inter } from "next/font/google";
 import Header from "../components/Header";
 
@@ -16,6 +15,8 @@ export default function Home() {
 							Trading Futures and Options <br /> in WEB 3.0
 						</h2>
 
+						<br />
+
 						<p className="text-2xl text-center">
 							MANATEE is a highly secure and customisable <br /> futures and options decentralised
 							trading platform.
@@ -24,8 +25,11 @@ export default function Home() {
 				</div>
 			</div>
 
-			<main className="flex min-h-screen flex-col items-center justify-center p-24">
-				<div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-3 lg:text-left gap-10">
+			<br />
+			<br />
+
+			<main className="flex flex-col items-center justify-center p-24">
+				<div className="mb-22 grid text-center lg:mb-0 lg:grid-cols-3 lg:text-left gap-10">
 					<a
 						href="/portfolio"
 						className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-blue-700 hover:bg-blue-700/30 bg-blue-600 shadow-lg"
@@ -39,7 +43,7 @@ export default function Home() {
 							</span>
 						</h2>
 						<p className={`${inter.className} m-0 max-w-[30ch] text-lg opacity-75`}>
-							Portfolio exchange.
+							Create and trade portfolio.
 						</p>
 					</a>
 

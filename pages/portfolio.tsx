@@ -5,15 +5,13 @@ import { useRouter } from "next/router";
 import Header from "../components/Header";
 // import PieChart from "../components/PieChart";
 import web3 from "web3";
+import ethers from "ethers";
 
 import abi from "../utils/portfolioABI.json";
 import address from "../utils/portfolioAddress.json";
 
 import PortfolioButton from "../components/PortfolioButton";
-import PortfolioDetails from "../components/PortfolioDetails";
-
-const contractAddress = address.address;
-const contractAbi = abi;
+import { PortfolioDetails } from "../components/PortfolioDetails";
 
 export default function Create() {
 	const [selectedPortfolio, setSelectedPortfolio] = useState<{
@@ -254,12 +252,12 @@ export default function Create() {
 
 						{selectedPortfolio && (
 							<PortfolioDetails
-								name={selectedPortfolio.name}
-								symbol={selectedPortfolio.symbol}
-								percentages={selectedPortfolio.percentages.join(", ")}
-								address={selectedPortfolio.address}
-								totalSupply={selectedPortfolio.totalSupply}
-								balance={selectedPortfolio.balance}
+							// name={selectedPortfolio.name}
+							// symbol={selectedPortfolio.symbol}
+							// percentages={selectedPortfolio.percentages.join(", ")}
+							// address={selectedPortfolio.address}
+							// totalSupply={selectedPortfolio.totalSupply}
+							// balance={selectedPortfolio.balance}
 							/>
 						)}
 					</div>

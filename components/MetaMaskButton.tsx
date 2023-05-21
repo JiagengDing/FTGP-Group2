@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { connectToMetaMask } from "../utils/ethereum";
+import { init } from "../utils/blockchain";
 
 function MetaMaskButton() {
 	const [userAddress, setUserAddress] = useState("");
 
 	const handleClick = async () => {
-		const address = await connectToMetaMask();
+		const address = await init();
 		if (address) {
 			setUserAddress(address);
 		}

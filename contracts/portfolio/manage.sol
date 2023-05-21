@@ -30,7 +30,7 @@ contract ECR20_PToken is IERC20 {
     uint256 public daiRatio;
     uint256 public usdcRatio;
     uint256 public linkRatio;
- 
+
     AggregatorV3Interface public daiPriceFeed = AggregatorV3Interface(0x14866185B1962B63C3Ea9E03Bc1da838bab34C19); // DAI/USD on sepolia
     AggregatorV3Interface public usdcPriceFeed = AggregatorV3Interface(0xA2F78ab2355fe2f984D808B5CeE7FD0A93D5270E); // USDC/USD on sepolia
     AggregatorV3Interface public linkPriceFeed = AggregatorV3Interface(0xc59E3633BAAC79493d908e63626716e204A45EdF); // LINK/USD on sepolia
@@ -43,8 +43,8 @@ contract ECR20_PToken is IERC20 {
         uint8 _decimals,
         uint _totalSupply,
         //address owner
-        uint256 daiRatio_, 
-        uint256 usdcRatio_, 
+        uint256 daiRatio_,
+        uint256 usdcRatio_,
         uint256 linkRatio_,
         uint256 customIPRate
     ) {
@@ -106,6 +106,3 @@ contract ECR20_PToken is IERC20 {
         return balanceOf[msg.sender];
     }
 }
-
-
-
