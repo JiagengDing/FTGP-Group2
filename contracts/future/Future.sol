@@ -52,13 +52,13 @@ contract Future is ReentrancyGuard {
 
     // Offer Status Enumeration
     enum OfferStatus {
-        // 未成交
+        // unsold
         Unsold,
-        // 已成交，待交割
+        // Sold, pending delivery
         DealDone,
-        // 已交割
+        // Delivered
         Delivered,
-        // 已撤销
+        // Cancel
         Revoked
     }
     //-------------------------------------------------Structs + Enumerations---------------------------------------------------
