@@ -1,14 +1,7 @@
 import Head from "next/head";
 import { useState } from "react";
-import { useEffect } from "react";
-import { useRouter } from "next/router";
 import Header from "../components/Header";
 // import PieChart from "../components/PieChart";
-import web3 from "web3";
-import ethers from "ethers";
-
-import abi from "../utils/portfolioABI.json";
-import address from "../utils/portfolioAddress.json";
 
 import PortfolioButton from "../components/PortfolioButton";
 import { PortfolioDetails } from "../components/PortfolioDetails";
@@ -41,23 +34,6 @@ export default function Create() {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-
-		const params = {
-			dai,
-			wbnb,
-			weth,
-			name,
-			symbol,
-			decimals,
-			totalSupply,
-			customIPRate,
-		};
-
-		//   // Get accounts
-		//   const accounts = await web3.eth.getAccounts();
-		//
-		//   // Call mint method
-		//   await contract.methods.mint(params.totalSupply).send({ from: accounts[0] });
 	};
 
 	return (
@@ -66,7 +42,7 @@ export default function Create() {
 				<title>Manatee Portfolio</title>
 			</Head>
 
-			<div className="min-h-screen bg-slate-100 container mx-auto">
+			<div className="min-h-screen bg-slate-100">
 				<Header />
 				<div className="flex flex-col lg:flex-row justify-center mt-20">
 					<div className="flex flex-col justify-center items-center w-full lg:w-1/2">
