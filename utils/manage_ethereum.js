@@ -1,7 +1,12 @@
 import { ethers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
+import factoryAbi from "../utils/manageABI.json";
+import factoryAddress from "../utils/manageAddress.json";
 
 const { active, activate, library: provider } = useWeb3React();
+const contractAddress = factoryAddress;
+const contractAbi = factoryAbi;
+let factoryContract;
 
 const connectToMetaMask = async () => {
 	if (typeof window.ethereum !== "undefined") {
@@ -13,6 +18,10 @@ const connectToMetaMask = async () => {
 		const signer = provider.getSigner();
 		const address = await signer.getAddress();
 		console.log("Connected to MetaMask with address:", address);
+
+		// Instantiate the contract
+		factoryContract = new ethers.Contract(contractAddress, contractAbi, signer);
+
 		return address;
 	} else {
 		console.log("Please install MetaMask to connect to Ethereum.");
@@ -20,4 +29,4 @@ const connectToMetaMask = async () => {
 	}
 };
 
-export { connectToMetaMask };
+export { connectToMetaMask, factoryContract };
