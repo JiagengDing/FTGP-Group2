@@ -1,4 +1,5 @@
 import { Inter } from "next/font/google";
+import Link from "next/link";
 import Header from "../components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -30,10 +31,9 @@ export default function Home() {
 
 			<main className="flex flex-col items-center justify-center p-24">
 				<div className="mb-22 grid text-center lg:mb-0 lg:grid-cols-3 lg:text-left gap-10">
-					<a
+					<Link
 						href="/portfolio"
 						className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-blue-700 hover:bg-blue-700/30 bg-blue-600 shadow-lg"
-						target="_blank"
 						rel="noopener noreferrer"
 					>
 						<h2 className={`${inter.className} mb-3 text-3xl font-semibold`}>
@@ -45,12 +45,11 @@ export default function Home() {
 						<p className={`${inter.className} m-0 max-w-[30ch] text-lg opacity-75`}>
 							Create and trade portfolio.
 						</p>
-					</a>
+					</Link>
 
-					<a
+					<Link
 						href="/options"
 						className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-purple-700 hover:bg-purple-700/30 bg-purple-600 shadow-lg"
-						target="_blank"
 						rel="noopener noreferrer"
 					>
 						<h2 className={`${inter.className} mb-3 text-3xl font-semibold`}>
@@ -62,12 +61,11 @@ export default function Home() {
 						<p className={`${inter.className} m-0 max-w-[30ch] text-lg opacity-75`}>
 							Options exchange.
 						</p>
-					</a>
+					</Link>
 
-					<a
+					<Link
 						href="/futures"
 						className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-purple-700 hover:bg-purple-700/30 bg-purple-600 shadow-lg"
-						target="_blank"
 						rel="noopener noreferrer"
 					>
 						<h2 className={`${inter.className} mb-3 text-3xl font-semibold`}>
@@ -79,7 +77,7 @@ export default function Home() {
 						<p className={`${inter.className} m-0 max-w-[30ch] text-lg opacity-75`}>
 							Futures exchange.
 						</p>
-					</a>
+					</Link>
 				</div>
 			</main>
 		</div>
