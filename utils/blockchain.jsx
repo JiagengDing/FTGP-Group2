@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
-import abi from "./tradeABI.json";
-import address from "./tradeAddress.json";
+import abi from "./address/tradeABI.json";
+import address from "./address/tradeAddress.json";
 
 const contractAddress = address.PM1;
 const LRPcontractAddress = address.LRP;

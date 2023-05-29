@@ -198,8 +198,7 @@ const handleSubmit = async (e) => {
 	return (
 		<div>
 			<Head>
-				<title>Manatee DApp - Create a Future Contract</title>
-				<link rel="icon" href="/favicon.ico" />
+				<title>Manatee DApp - Futures</title>
 			</Head>
 
 			<div className="min-h-screen bg-slate-100">

@@ -1,38 +1,126 @@
 import Head from "next/head";
 import { useState } from "react";
 import Header from "../components/Header";
-// import PieChart from "../components/PieChart";
+import { ethers } from "ethers";
+import abi from "../utils/address/tradeABI.json";
+import address from "../utils/address/tradeAddress.json";
 
-import PortfolioButton from "../components/PortfolioButton";
-import { PortfolioDetails } from "../components/PortfolioDetails";
 
-export default function Create() {
-	const [selectedPortfolio, setSelectedPortfolio] = useState<{
-		name: string;
-		symbol: string;
-		percentages: number[];
-		address: string;
-		totalSupply: number;
-		balance: number;
-	}>({
-		name: "",
-		symbol: "",
-		percentages: [],
-		address: "",
-		totalSupply: 0,
-		balance: 0,
-	});
+
+const contractAddress = address.PM1;
+const contractAddress2 = address.LRP;
+const contractAbi = abi;
+
+let provider;
+let signer;
+let contract1;
+let contract2;
+
+
+export default function Portfolio() {
+	async function init() {
+	if (typeof window.ethereum !== "undefined") {
+		provider = new ethers.providers.Web3Provider(window.ethereum);
+		await provider.send("eth_requestAccounts", []);
+
+		signer = provider.getSigner();
+		const userAddress = await signer.getAddress();
+		contract1 = new ethers.Contract(contractAddress, contractAbi, signer);
+		contract2 = new ethers.Contract(contractAddress2, contractAbi, signer);
+		await window.ethereum.enable();
+		return contract1;
+	} else {
+		console.log("Please Install Metamask!");
+		return;
+	}
+};
+
 
 	const [dai, setDai] = useState("");
 	const [wbnb, setWbnb] = useState("");
 	const [weth, setWeth] = useState("");
 	const [name, setName] = useState("");
 	const [symbol, setSymbol] = useState("");
+	const [buyAmount, setBuyAmount] = useState("");
+	const [buyAmount2, setBuyAmount2] = useState("");
 	const [decimals, setDecimals] = useState("");
 	const [totalSupply, setTotalSupply] = useState("");
 	const [customIPRate, setIPR] = useState("");
+	const [latestPrice, setLatestPrice] = useState("");
 
-	const handleSubmit = async (e: React.FormEvent) => {
+  async function buyPM1(amount) {
+  if (!provider || !signer) {
+    console.log("Ethers Not Init");
+    return;
+  }
+
+  try {
+		await init();
+    const tx = await contract1.mint(amount);
+    console.log('Transaction Hash:', tx.hash);
+    const receipt = await tx.wait();
+    console.log('Transaction was mined in block', receipt.blockNumber);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+  async function buyLRP(amount) {
+  if (!provider || !signer) {
+    console.log("Ethers Not Init");
+    return;
+  }
+
+  try {
+		await init();
+    const tx = await contract2.mint(amount);
+    console.log('Transaction Hash:', tx.hash);
+    const receipt = await tx.wait();
+    console.log('Transaction was mined in block', receipt.blockNumber);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+
+		const handleBuy = async () => {
+		await init();
+		const amount = buyAmount;
+		await buyPM1(amount);
+	};
+
+	const handleBuyAmountChange = (e) => {
+		setBuyAmount(e.target.value);
+	};
+
+		const handleBuy2 = async () => {
+		await init();
+		const amount = buyAmount2;
+		await buyLRP(amount);
+	};
+
+	const handleBuyAmountChange2 = (e) => {
+		setBuyAmount2(e.target.value);
+	};
+
+ async function getTotalSupply() {
+  if (!provider || !signer) {
+    console.log("Ethers Not Init");
+    return;
+  }
+
+  try {
+    const supply = await contract1.getTotalSupply();
+		setTotalSupply(supply);
+    console.log('Total supply:', totalSupply.toString());
+    return totalSupply;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+
+
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 	};
 
@@ -59,7 +147,7 @@ export default function Create() {
                 focus:shadow-outline"
 									id="dai"
 									type="number"
-									placeholder="DAI"
+									placeholder="HOPE RATIO"
 									value={dai}
 									onChange={(e) => setDai(e.target.value)}
 									required
@@ -73,7 +161,7 @@ export default function Create() {
                 focus:shadow-outline"
 									id="wbnb"
 									type="number"
-									placeholder="WBNB"
+									placeholder="USDC RATIO"
 									value={wbnb}
 									onChange={(e) => setWbnb(e.target.value)}
 									required
@@ -87,7 +175,7 @@ export default function Create() {
                 focus:shadow-outline"
 									id="weth"
 									type="number"
-									placeholder="WETH"
+									placeholder="LINK RATIO"
 									value={weth}
 									onChange={(e) => setWeth(e.target.value)}
 									required
@@ -181,61 +269,62 @@ export default function Create() {
 						<p className="text-center text-sm text-slate-600">
 							Any user can buy or sell any Existed Portfolio from here.
 						</p>
+								<div>
+			<h2 className="text-2xl font-bold text-slate-800 py-5">PM1</h2>
 
-						<div className="flex justify-around my-5">
-							<div>
-								<PortfolioButton
-									name="PM1"
-									onClick={() =>
-										setSelectedPortfolio({
-											name: "PM1",
-											symbol: "Portfolio Symbol",
-											percentages: [10, 20, 70],
-											address: "0x1234567890",
-											totalSupply: 0,
-											balance: 0,
-										})
-									}
-								/>
-								<PortfolioButton
-									name="LPR"
-									onClick={() =>
-										setSelectedPortfolio({
-											name: "LPR",
-											symbol: "Portfolio Symbol",
-											percentages: [10, 20, 70],
-											address: "0x1234567890",
-											totalSupply: 0,
-											balance: 0,
-										})
-									}
-								/>
-								<PortfolioButton
-									name="TEST"
-									onClick={() =>
-										setSelectedPortfolio({
-											name: "TEST",
-											symbol: "TEST",
-											percentages: [10, 20, 70],
-											address: "0x517834831F0487a6D357d82B98140c94566497A7",
-											totalSupply: 0,
-											balance: 0,
-										})
-									}
-								/>
-							</div>
-						</div>
+			<div className="block center">
+			  <p>Address: 0x3B....1573</p>
+				<p>Token Name: PM1</p>
+				<p>Latest Price: 0.00007688</p>
+			</div>
 
-						{selectedPortfolio && (
-							<PortfolioDetails
-							// name={selectedPortfolio.name}
-							// symbol={selectedPortfolio.symbol}
-							// percentages={selectedPortfolio.percentages.join(", ")}
-							// address={selectedPortfolio.address}
-							// totalSupply={selectedPortfolio.totalSupply}
-							// balance={selectedPortfolio.balance}
-							/>
-						)}
+			<div className="mb-4">
+				<input
+					className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="buyAmount"
+					type="number"
+					placeholder="Amount to buy"
+					value={buyAmount}
+					onChange={handleBuyAmountChange}
+				/>
+			</div>
+			<button
+				onClick={handleBuy}
+				className="w-full bg-[#0c2856] hover:bg-[#1a396c] text-white font-bold
+        py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+			>
+				Buy
+			</button>
+		</div>
+
+			<div>
+			<h2 className="text-2xl font-bold text-slate-800 py-5">LRP</h2>
+
+			<div className="block center">
+			  <p>Address: 0x41....a749</p>
+				<p>Token Name: LRP</p>
+				<p>Latest Price: 0.00005123</p>
+			</div>
+
+			<div className="mb-4">
+				<input
+					className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="buyAmount"
+					type="number"
+					placeholder="Amount to buy"
+					value={buyAmount2}
+					onChange={handleBuyAmountChange2}
+				/>
+			</div>
+			<button
+				onClick={handleBuy2}
+				className="w-full bg-[#0c2856] hover:bg-[#1a396c] text-white font-bold
+        py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+			>
+				Buy
+			</button>
+		</div>
+
 					</div>
 				</div>
 			</div>
