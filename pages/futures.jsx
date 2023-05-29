@@ -145,18 +145,18 @@ async function trade(id) {
 	const [price, setPrice] = useState("");
 	const [quantity, setQuantity] = useState("");
 	const [expiresAt, setExpiresAt] = useState("");
+  const assetsObject = {tockenC:"0xE035Ea35F6f629f0312A2cD722CA5F627b882a67", tockenD:"0xE55DE62Aa86b98b29D42fdA68A29B6d300a20d5b"};
 		useEffect(() => {
     async function fetchAssets() {
         try {
             // Assuming `contract` is already initialized
 					const contract1 = await init();
-            const assets1 = await contract1.getAssetList();
-					console.log(assets1)
-  					const assets = assets1.map(item => item[0]);
+          const assets = await contract1.getAssetList();
+
 
             setAssets(assets);
             if (assets.length > 0) {
-                setAsset(assets[0]); // Set the first asset as the initial selected asset
+                setAsset(assets[0][0]); // Set the first asset as the initial selected asset
             }
         } catch (error) {
             console.error("An error occurred", error);
@@ -173,7 +173,8 @@ const handleSubmit = async (e) => {
 
     try {
         // Convert values if needed
-        const assetAddress = asset; // Assuming `asset` is the asset's address
+        const assetAddress = assetsObject.tockenC;
+        console.log(assetAddress);
         const priceInWei = ethers.utils.parseUnits(price, 'ether'); // Convert price from ether to wei, assuming price is in ether
         const quantityInWei = ethers.utils.parseUnits(quantity, 'ether'); // Convert quantity from ether to wei, assuming quantity is in ether
         const expiresAtTimestamp = Math.floor(new Date(expiresAt).getTime() / 1000); // Convert JavaScript timestamp (ms) to Unix timestamp (s)
@@ -191,8 +192,8 @@ const handleSubmit = async (e) => {
 };
 
 
-// console.log(data);
-		// console.log(assets);
+// console.log(assetsObject.tockenC);
+		// console.log(asset1);
 
 	return (
 		<div>
