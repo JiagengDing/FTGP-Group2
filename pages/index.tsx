@@ -54,7 +54,7 @@ export default function Home() {
 						rel="noopener noreferrer"
 					>
 						<h2 className={`${inter.className} mb-3 text-3xl font-semibold`}>
-							Option{" "}
+							Options{" "}
 							<span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
 								-&gt;
 							</span>
@@ -71,7 +71,7 @@ export default function Home() {
 						rel="noopener noreferrer"
 					>
 						<h2 className={`${inter.className} mb-3 text-3xl font-semibold`}>
-							Future{" "}
+							Futures{" "}
 							<span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
 								-&gt;
 							</span>
