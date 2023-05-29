@@ -1,16 +1,9 @@
 // import PieChart from "./PieChart";
 // <PieChart data={percentages} />
 import { useState } from "react";
-import { ethers } from "ethers";
-import { useEffect } from "react";
 import { ChangeEvent } from "react";
-import { init, buy } from "@/utils/blockchain";
+import { init, buyPM1 } from "@/utils/blockchain";
 
-import abi from "../utils/portfolioABI.json";
-import address from "../utils/portfolioAddress.json";
-
-const contractAddress = address.address;
-const contractAbi = abi;
 // const [totalSupply, setTotalSupply] = useState("");
 // const [name, setName] = useState("");
 // const [address, setAddress] = useState("");
@@ -20,31 +13,10 @@ const contractAbi = abi;
 const PortfolioDetails = () => {
 	const [buyAmount, setBuyAmount] = useState("");
 
-	const portfolioTrade = new ethers.Contract(
-		contractAddress,
-		contractAbi,
-		ethers.providers.getDefaultProvider("kovan")
-	);
-	useEffect(() => {
-		// setTotalSupply(portfolioTrade.totalSupply().toString);
-		// portfolioTrade.totalSupply().then((res) => {
-		//   setTotalSupply(res.toString());
-		// });
-	});
-
-	const handleMint = async () => {
-		try {
-			const result = await portfolioTrade.mint(buyAmount);
-			console.log("Mint Result:", result);
-		} catch (error) {
-			console.error("Mint Error:", error);
-		}
-	};
-
 	const handleBuy = async () => {
 		await init();
 		const amount = buyAmount;
-		await buy(amount);
+		await buyPM1(amount);
 	};
 
 	const handleBuyAmountChange = (event: ChangeEvent<HTMLInputElement>) => {

@@ -1,0 +1,244 @@
+import Head from "next/head";
+import React, { useEffect, useState } from "react";
+import Header from "../components/Header";
+import { ethers } from "ethers";
+
+import abi from "../utils/address/futuresABI.json";
+
+const ABI = abi;
+const contractAddress = "0x65ed55184efd596ca62e8488446448087b792277";
+
+let provider;
+let signer;
+// let contract;
+
+
+// Create an instance of the contract
+// const provider = new ethers.providers.Web3Provider(window.ethereum);
+// const contract = new ethers.Contract(contractAddress, ABI, provider);
+
+// Initialize an empty array for the data
+// type DataType = {
+//   id: string;
+//   name: string;
+//   price: number;
+//   quantity: number;
+//   deliveryDate: string;
+// };
+//
+// const [data, setData] = useState<DataType[]>([
+//   { id: "id", name: "name", price: 0, quantity: 0, deliveryDate: "date" },
+// ]);
+
+export default function Futures() {
+
+async function init() {
+	if (typeof window.ethereum !== "undefined") {
+		provider = new ethers.providers.Web3Provider(window.ethereum);
+		await provider.send("eth_requestAccounts", []);
+
+		signer = provider.getSigner();
+		const address = await signer.getAddress();
+		await window.ethereum.enable();
+		return address;
+	} else {
+		console.log("Please Install Metamask!");
+		return;
+	}
+}
+init();
+
+const [data, setData] = useState([]);
+
+useEffect(() => {
+	async function fetchData() {
+		// Call the getOfferList function
+		const contract = new ethers.Contract(contractAddress, ABI, signer);
+		const ids = await contract.getOfferList();
+
+		// Fetch data for each id
+		const promises = ids.map(async (id) => {
+			const { name, price, quantity, deliveryDate } = await contract.offers(id);
+			return { id, name, price, quantity, deliveryDate };
+		});
+
+		// Resolve all promises and update state
+		const results = await Promise.all(promises);
+		setData(results);
+	}
+
+	fetchData();
+}, []);
+	// const [tradeList, setTradeList] = useState<{
+	//   id: string;
+	//   name: string;
+	//   price: number;
+	//   quantity: number;
+		// date: string;
+	// }>({
+	//   id: "",
+	//   name: "",
+	//   price: 0,
+	//   quantity: 0,
+	//   date: "",
+	// });
+
+	const [title, setTitle] = useState("");
+	const [asset, setAsset] = useState("");
+	const [price, setPrice] = useState("");
+	const [quantity, setQuantity] = useState("");
+	const [expiresAt, setExpiresAt] = useState("");
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		// if (!wallet) return toast.warning("Wallet not connected");
+
+		if (!title || !asset || price || !quantity || !expiresAt) return;
+		const params = {
+			title,
+			asset,
+			price,
+			quantity,
+			expiresAt: new Date(expiresAt).getTime(),
+		};
+	};
+
+	return (
+		<div>
+			<Head>
+				<title>Manatee DApp - Create a Future Contract</title>
+				<link rel="icon" href="/favicon.ico" />
+			</Head>
+
+			<div className="min-h-screen bg-slate-100">
+				<Header />
+				<div className="flex flex-col lg:flex-row justify-center mt-20">
+					<div className="flex flex-col justify-center items-center w-full lg:w-1/2">
+						<h1 className="text-2xl font-bold text-slate-800 py-5">Create New Portfolio</h1>
+
+						<p className="text-center text-sm text-slate-600">
+							On this page, you can create a custom futures contracts <br />
+							which is used to hedge your holdings risk.
+						</p>
+
+						<form onSubmit={handleSubmit} className="w-full max-w-md">
+							<div className="mb-4">
+								<input
+									className="appearance-none border rounded w-full py-2 px-3
+                text-gray-700 leading-tight focus:outline-none
+                focus:shadow-outline"
+									id="title"
+									type="text"
+									placeholder="Title"
+									value={title}
+									onChange={(e) => setTitle(e.target.value)}
+									required
+								/>
+							</div>
+							<div className="mb-6">
+								<input
+									className="appearance-none border rounded w-full py-2 px-3
+                text-gray-700 leading-tight focus:outline-none
+                focus:shadow-outline"
+									id="ticketPrice"
+									type="text"
+									step={0.01}
+									min={0.01}
+									placeholder="Asset"
+									value={asset}
+									onChange={(e) => setAsset(e.target.value)}
+									required
+								/>
+							</div>
+							<div className="mb-4">
+								<input
+									className="appearance-none border rounded w-full py-2 px-3
+                text-gray-700 leading-tight focus:outline-none
+                focus:shadow-outline"
+									id="price"
+									type="number"
+									step={0.01}
+									min={0.01}
+									placeholder="Price"
+									value={price}
+									onChange={(e) => setPrice(e.target.value)}
+									required
+								/>
+							</div>
+							<div className="mb-4">
+								<input
+									className="appearance-none border rounded w-full py-2 px-3
+                text-gray-700 leading-tight focus:outline-none
+                focus:shadow-outline"
+									id="quantity"
+									type="number"
+									step={0.01}
+									min={0.01}
+									placeholder="Quantity"
+									value={quantity}
+									onChange={(e) => setQuantity(e.target.value)}
+									required
+								/>
+							</div>
+							<div className="mb-6">
+								<input
+									className="appearance-none border rounded w-full py-2 px-3
+                text-gray-700 leading-tight focus:outline-none
+                focus:shadow-outline"
+									id="expiresAt"
+									type="datetime-local"
+									value={expiresAt}
+									onChange={(e) => setExpiresAt(e.target.value)}
+									required
+								/>
+							</div>
+							<div className="flex justify-center">
+								<button
+									className="w-full bg-[#0c2856] hover:bg-[#1a396c] text-white font-bold
+                py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+									type="submit"
+								>
+									Submit This Futures
+								</button>
+							</div>
+						</form>
+					</div>
+
+					<div className="flex flex-col justify-center items-center w-full lg:w-1/2">
+						<div>
+							<button className="my-2 w-2/3 bg-[#0c2856] hover:bg-[#1a396c] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+								Existing Futures
+							</button>
+							<table>
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Price</th>
+										<th>Quantity</th>
+										<th>Delivery Date</th>
+									</tr>
+								</thead>
+								<tbody>
+									{data.map((item) => (
+										<tr key={item.id}>
+											<td>{item.name}</td>
+											<td>{item.price}</td>
+											<td>{item.quantity}</td>
+											<td>{item.deliveryDate}</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+
+							{/* The table for existing futures goes here */}
+							<button className="my-2 w-2/3 bg-[#0c2856] hover:bg-[#1a396c] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+								My Futures
+							</button>
+							{/* The table for my futures goes here */}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
